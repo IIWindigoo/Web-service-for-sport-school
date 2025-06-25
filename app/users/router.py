@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Response, Depends
 from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
-from app.users.auth import get_password_hash, verify_password, create_access_token, authenticate_user
-from app.users.schemas import SUserRegister, SUserAddDB, SUserAuth
+from app.users.auth import create_access_token, authenticate_user
+from app.users.schemas import SUserRegister, SUserAddDB, SUserAuth, SUserInfo
 from app.users.dao import UserDAO
 from app.users.models import User
+from app.users.dependencies import (get_current_user, role_required)
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -33,3 +34,11 @@ async def auth_user(response: Response, user_data: SUserAuth) -> dict:
 async def logout_user(response: Response) -> dict:
     response.delete_cookie("users_access_token")
     return {"message": "Пользователь успешно вышел из системы"}
+
+@router.get("/me/")
+async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
+    return SUserInfo.model_validate(user_data)
+
+@router.get("/all_users/")
+async def get_all_users(user_data: User = Depends(role_required(["admin"]))) -> list[SUserInfo]:
+    return await UserDAO.find_all()
