@@ -35,3 +35,6 @@ class SUserRegister(UserBase):
             raise ValueError("Пароли не совпадают")
         self.password = get_password_hash(self.password)
         return self
+
+class SUserAddDB(UserBase):
+    password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
