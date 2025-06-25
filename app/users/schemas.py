@@ -45,3 +45,6 @@ class SUserAuth(EmailModel):
 class SUserInfo(UserBase):
     id: int = Field(description="Идентификатор пользователя")
     role: UserRole = Field(description="Название роли пользователя")
+
+class SUserRoleUpd(BaseModel):
+    new_role: UserRole

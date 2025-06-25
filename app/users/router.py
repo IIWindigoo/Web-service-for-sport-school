@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Response, Depends, HTTPException
 from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
 from app.users.auth import create_access_token, authenticate_user
-from app.users.schemas import SUserRegister, SUserAddDB, SUserAuth, SUserInfo
+from app.users.schemas import SUserRegister, SUserAddDB, SUserAuth, SUserInfo, SUserRoleUpd
 from app.users.dao import UserDAO
-from app.users.models import User
+from app.users.models import User, UserRole
 from app.users.dependencies import (get_current_user, role_required)
 
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+router = APIRouter(prefix="/user", tags=["Auth"])
 
 @router.post("/register/")
 async def register_user(user_data: SUserRegister) -> dict:
@@ -42,3 +42,18 @@ async def get_me(user_data: User = Depends(get_current_user)) -> SUserInfo:
 @router.get("/all_users/")
 async def get_all_users(user_data: User = Depends(role_required(["admin"]))) -> list[SUserInfo]:
     return await UserDAO.find_all()
+
+@router.patch("/{user_id}/role", summary="Изменить роль пользователя")
+async def change_user_role(user_id: int, 
+                           role_data: SUserRoleUpd, 
+                           user_data: User = Depends(role_required([UserRole.admin]))
+                           ) -> dict:
+    if user_data.id == user_id:
+        raise HTTPException(status_code=403, detail="Админ не может менять свою роль")
+    
+    user = await UserDAO.find_one_or_none_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    updated_user = await UserDAO.update_role(user_id=user_id, new_role=role_data.new_role)
+    return {"message": f"Роль пользователя {user_id} обновлена: {updated_user.role}"}
