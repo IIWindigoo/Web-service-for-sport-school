@@ -38,3 +38,10 @@ class SUserRegister(UserBase):
 
 class SUserAddDB(UserBase):
     password: str = Field(min_length=5, description="Пароль в формате HASH-строки")
+
+class SUserAuth(EmailModel):
+    password: str = Field(min_length=5, max_length=50, description="Пароль, от 5 до 50 символов")
+
+class SUserInfo(UserBase):
+    id: int = Field(description="Идентификатор пользователя")
+    role: UserRole = Field(description="Название роли пользователя")

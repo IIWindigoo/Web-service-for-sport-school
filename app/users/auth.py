@@ -19,3 +19,8 @@ def create_access_token(data: dict) -> str:
     to_encode.update({"exp": expire})
     auth_data = settings.get_auth_data
     return jwt.encode(to_encode, auth_data["secret_key"], algorithm=auth_data["algorithm"])
+
+async def authenticate_user(user, password):
+    if not user or verify_password(plain_password=password, hashed_password=user.password) is False:
+        return None
+    return user

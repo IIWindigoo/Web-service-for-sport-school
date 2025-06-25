@@ -1,5 +1,6 @@
 from sqlalchemy import select, update, delete
 from sqlalchemy.exc import SQLAlchemyError
+from pydantic import BaseModel
 
 from app.database import async_session
 
@@ -47,10 +48,11 @@ class BaseDAO:
                 return result.rowcount
     
     @classmethod
-    async def add(cls, **values):
+    async def add(cls, values: BaseModel):
+        values_dict = values.model_dump(exclude_unset=True)
         async with async_session() as session:
             async with session.begin():
-                new_instance = cls.model(**values)
+                new_instance = cls.model(**values_dict)
                 session.add(new_instance)
                 try:
                     session.commit()
