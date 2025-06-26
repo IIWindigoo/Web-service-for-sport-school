@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import time
 from datetime import date as dt
+from app.users.schemas import SUserShort
 
 
 class STrainingAdd(BaseModel):
@@ -30,5 +31,8 @@ class STrainingShort(BaseModel):
     date: dt
     start_time: time
     end_time: time
-    
+
     model_config = ConfigDict(from_attributes=True)
+
+class STrainingWithClients(STrainingShort):
+    clients: list[SUserShort]

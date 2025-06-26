@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.trainings.schemas import STrainingInfo, STrainingAdd, STrainingUpd
+from app.trainings.schemas import STrainingInfo, STrainingAdd, STrainingUpd, STrainingWithClients
 from app.trainings.dao import TrainingDAO
 from app.users.models import User, UserRole
 from app.users.dependencies import role_required, get_current_user
@@ -65,3 +65,9 @@ async def delete_training(training_id: int,
     if deleted_count:
         return {"message": f"Тренировка {training_id} успешно удалена"}
     return {"message": "Ошибка при удалении тренировки"}
+
+@router.get("/my/", summary="Мои тренировки с участниками", response_model=list[STrainingWithClients])
+async def get_my_trainings(user_data: User = Depends(role_required([UserRole.trainer]))):
+    trainer_id = user_data.id
+    trainings = await TrainingDAO.find_by_trainer_with_clients(trainer_id)
+    return trainings

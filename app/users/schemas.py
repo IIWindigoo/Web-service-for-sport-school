@@ -48,3 +48,9 @@ class SUserInfo(UserBase):
 
 class SUserRoleUpd(BaseModel):
     new_role: UserRole
+
+class SUserShort(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    model_config = ConfigDict(from_attributes=True)
