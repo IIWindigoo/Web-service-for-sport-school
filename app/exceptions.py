@@ -18,4 +18,11 @@ NoJwtException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
 NoUserIdException = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                   detail='Не найден ID пользователя')
 
-ForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Недостаточно прав!')
+ForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
+                                   detail='Недостаточно прав!')
+
+TrainingNotFound = HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                                 detail="Тренировка не найдена")
+
+TrainingForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
+                                           detail="Нет доступа к этой тренировкe")

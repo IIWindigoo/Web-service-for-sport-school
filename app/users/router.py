@@ -56,4 +56,4 @@ async def change_user_role(user_id: int,
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     
     updated_user = await UserDAO.update_role(user_id=user_id, new_role=role_data.new_role)
-    return {"message": f"Роль пользователя {user_id} обновлена: {updated_user.role}"}
+    return {"message": f"Роль пользователя {user_id} обновлена: {updated_user.role.value}"}

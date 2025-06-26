@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.trainings.schemas import STrainingInfo, STrainingAdd
+from app.trainings.schemas import STrainingInfo, STrainingAdd, STrainingUpd
 from app.trainings.dao import TrainingDAO
 from app.users.models import User, UserRole
-from app.users.dependencies import role_required
+from app.users.dependencies import role_required, get_current_user
 from app.users.dao import UserDAO
+from app.exceptions import TrainingNotFound, TrainingForbiddenException
 
 
 router = APIRouter(prefix="/trainings", tags=["Trainings"])
@@ -29,3 +30,38 @@ async def create_training(training_data: STrainingAdd,
     if new_training:
         return STrainingInfo.model_validate(new_training)
     return {"message": "Ошибка при добавлении заметки"}
+
+@router.patch("/{training_id}/", summary="Редактировать тренировку")
+async def update_training(training_id: int,
+                          data: STrainingUpd,
+                          user_data: User = Depends(get_current_user)
+                          ) -> STrainingInfo:
+    training = await TrainingDAO.find_one_or_none_by_id(training_id)
+    if not training:
+        raise TrainingNotFound
+    if user_data.role != UserRole.admin and training.trainer_id != user_data.id:
+        raise TrainingForbiddenException
+    
+    updated_count = await TrainingDAO.update(
+        {"id": training_id},
+        **data.model_dump(exclude_unset=True)
+    )
+
+    if updated_count == 0:
+        raise HTTPException(status_code=400, detail="Обновление не выполнено")
+    updated = await TrainingDAO.find_one_or_none_by_id(training_id)
+    return STrainingInfo.model_validate(updated)
+
+@router.delete("/{training_id}/", summary="Удалить тренировку")
+async def delete_training(training_id: int,
+                          user_data: User = Depends(get_current_user)) -> dict:
+    training = await TrainingDAO.find_one_or_none_by_id(training_id)
+    if not training:
+        raise TrainingNotFound
+    if user_data.role != UserRole.admin and training.trainer_id != user_data.id:
+        raise TrainingForbiddenException
+    
+    deleted_count = await TrainingDAO.delete(id=training_id)
+    if deleted_count:
+        return {"message": f"Тренировка {training_id} успешно удалена"}
+    return {"message": "Ошибка при удалении тренировки"}
