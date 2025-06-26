@@ -21,3 +21,4 @@ class User(Base):
     password: Mapped[str]
     role: Mapped[UserRole] = mapped_column(SqlEnum(UserRole), default=UserRole.client)
     trainings: Mapped[list["Training"]] = relationship(back_populates="trainer", cascade="all, delete-orphan") # type: ignore
+    bookings: Mapped[list["Booking"]] = relationship(back_populates="user", cascade="all, delete-orphan") # type: ignore

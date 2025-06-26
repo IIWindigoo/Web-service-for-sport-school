@@ -23,3 +23,12 @@ class STrainingUpd(BaseModel):
     date: dt | None = None 
     start_time: time | None = None
     end_time: time | None = None
+
+class STrainingShort(BaseModel):
+    id: int
+    title: str
+    date: dt
+    start_time: time
+    end_time: time
+    
+    model_config = ConfigDict(from_attributes=True)

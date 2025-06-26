@@ -26,3 +26,9 @@ TrainingNotFound = HTTPException(status_code=status.HTTP_404_NOT_FOUND,
 
 TrainingForbiddenException = HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
                                            detail="Нет доступа к этой тренировкe")
+
+BookingOnlyClient = HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                  detail="Только клиенты могут записываться")
+
+BookingExist = HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                             detail="Вы уже записаны")
