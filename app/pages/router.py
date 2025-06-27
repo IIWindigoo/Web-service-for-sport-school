@@ -5,6 +5,8 @@ from datetime import date, time, datetime, timezone
 import locale
 
 from app.trainings.router import get_trainings
+from app.users.dependencies import get_current_user_or_none
+from app.users.models import User
 
 
 locale.setlocale(locale.LC_TIME, "ru_RU.UTF-8")
@@ -24,10 +26,13 @@ templates.env.filters["format_date"] = format_date
 templates.env.filters["format_time"] = format_time
 
 @router.get("/")
-async def home_page(request: Request, trainings=Depends(get_trainings)):
+async def home_page(request: Request, 
+                    trainings=Depends(get_trainings),
+                    user: User = Depends(get_current_user_or_none)):
     return templates.TemplateResponse(name="index.html",
                                       context={
                                           "request": request,
                                           "trainings": trainings,
-                                          "now": datetime.now(timezone.utc).timestamp()
+                                          "now": datetime.now(timezone.utc).timestamp(),
+                                          "user": user,
                                       })

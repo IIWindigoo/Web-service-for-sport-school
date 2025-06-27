@@ -49,3 +49,9 @@ def role_required(roles: Sequence[UserRole]):
             return current_user
         raise ForbiddenException
     return dependency
+
+async def get_current_user_or_none(token: str = Depends(get_access_token)) -> User | None:
+    try: 
+        return await get_current_user(token)
+    except Exception:
+        return None
