@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from app.middleware.auth import AuthMiddleware
 from app.users.router import router as router_users
 from app.trainings.router import router as router_trainings
 from app.booking.router import router as router_bookings
@@ -13,6 +14,7 @@ app.mount("/static", StaticFiles(directory="app/static"), "static")
 async def top():
     return {"message": "top page"}
 
+app.add_middleware(AuthMiddleware)
 app.include_router(router_users)
 app.include_router(router_trainings)
 app.include_router(router_bookings)
