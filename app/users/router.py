@@ -30,7 +30,7 @@ async def auth_user(response: Response, user_data: SUserAuth) -> dict:
     response.set_cookie(key="users_access_token", value=access_token, httponly=True)
     return {"ok": True, "message": "Авторизация успешна"}
 
-@router.post("/logout")
+@router.post("/logout/")
 async def logout_user(response: Response) -> dict:
     response.delete_cookie("users_access_token")
     return {"message": "Пользователь успешно вышел из системы"}

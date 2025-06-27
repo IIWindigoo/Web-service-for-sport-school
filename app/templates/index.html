@@ -17,7 +17,16 @@
             {{ t.date | format_date }}<br>
             {{ t.start_time | format_time }} — {{ t.end_time | format_time }}
           </p>
-          <a href="/bookings/" class="btn btn-sm btn-primary">Записаться</a>
+          <button class="btn btn-sm btn-primary book-training" 
+                  data-training-id="{{ t.id }}"
+                  {% if not user or user.role != 'client' %}disabled{% endif %}>
+            Записаться
+          </button>
+          {% if not user %}
+            <p class="text-danger mt-2 mb-0 small">Для записи необходимо войти</p>
+          {% elif user.role != 'client' %}
+            <p class="text-danger mt-2 mb-0 small">Запись доступна только клиентам</p>
+          {% endif %}
         </div>
       </div>
     </div>

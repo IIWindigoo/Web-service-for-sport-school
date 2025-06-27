@@ -6,6 +6,7 @@ from typing import Any
 import locale
 
 from app.trainings.router import get_trainings
+from app.booking.router import get_user_bookings
 from app.users.dependencies import get_current_user_or_none
 from app.users.models import User
 
@@ -40,3 +41,13 @@ async def home_page(request: Request,
                                 "trainings": trainings,
                                 "now": datetime.now(timezone.utc).timestamp(),
                                 })
+
+@router.get("/me/")
+async def get_me_page(request: Request,
+                      bookings=Depends(get_user_bookings)):
+    return render_template(request,
+                           template_name="account.html",
+                           context={
+                               "bookings": bookings,
+                               "now": datetime.now(timezone.utc).timestamp(),
+                           })

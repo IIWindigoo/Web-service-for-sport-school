@@ -1,0 +1,41 @@
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="registration-form" class="modal-content" onsubmit="regFunction(event)">
+        <div class="modal-header">
+          <h5 class="modal-title">Регистрация</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Имя</label>
+            <input type="text" name="first_name" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Фамилия</label>
+            <input type="text" name="last_name" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Телефон</label>
+            <input type="tel" name="phone_number" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Почта</label>
+            <input type="email" name="email" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Пароль</label>
+            <input type="password" name="password" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Подтверждение пароля</label>
+            <input type="password" name="confirm_password" class="form-control" required />
+          </div>
+          <input type="hidden" name="role" value="client">
+          <p>Уже есть аккаунт? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Войти</a></p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+        </div>
+      </form>
+    </div>
+  </div>

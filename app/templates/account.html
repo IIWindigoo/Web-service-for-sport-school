@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет - Спортивная школа{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4>Мой профиль</h4>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+            <p class="card-text text-muted">{{ user.email }}</p>
+            <p class="card-text">{{ user.phone_number }}</p>
+          </div>
+          <button class="btn btn-outline-primary" onclick="editProfile()">Редактировать профиль</button>
+        </div>
+        <a href="/page/" class="btn btn-outline-secondary">
+            На главную страницу
+          </a>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4>Мои записи</h4>
+        </div>
+        <div class="card-body">
+          {% if bookings %}
+            <div class="list-group">
+              {% for booking in bookings %}
+              <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <h5>{{ booking.training.title }}</h5>
+                    <p class="mb-1">{{ booking.training.date | format_date }}</p>
+                    <small class="text-muted">
+                      {{ booking.training.start_time | format_time }} - {{ booking.training.end_time | format_time }}
+                    </small>
+                    <div class="mt-2">
+                      <small>Запись создана: {{ booking.created_at | format_date }}</small>
+                    </div>
+                  </div>
+                  <div>
+                    <button class="btn btn-sm btn-outline-danger cancel-booking" 
+                            data-training-id="{{ booking.training.id }}">
+                        Отменить
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-4">
+              <h5>У вас пока нет записей на тренировки</h5>
+              <p>Найдите подходящую тренировку и запишитесь!</p>
+              <a href="/page/" class="btn btn-primary">Перейти к тренировкам</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
