@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет тренера - Спортивная школа{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4>Мой профиль</h4>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+            <p class="card-text text-muted">{{ user.email }}</p>
+            <p class="card-text">{{ user.phone_number }}</p>
+            <p class="card-text"><strong>Роль:</strong> Тренер</p>
+          </div>
+          <button class="btn btn-outline-primary" onclick="editProfile()">
+            Редактировать профиль
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4>Мои тренировки</h4>
+        </div>
+        <div class="card-body">
+          {% if trainings %}
+            <div class="accordion" id="trainingsAccordion">
+              {% for training in trainings %}
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" 
+                          data-bs-toggle="collapse" 
+                          data-bs-target="#collapse{{ training.id }}"
+                          aria-expanded="false" 
+                          aria-controls="collapse{{ training.id }}">
+                    {{ training.title }} - {{ training.date | format_date }} 
+                    ({{ training.start_time | format_time }} - {{ training.end_time | format_time }})
+                    <span class="badge bg-primary ms-2">
+                      {{ training.clients|length }} записей
+                    </span>
+                  </button>
+                </h2>
+                <div id="collapse{{ training.id }}" class="accordion-collapse collapse" 
+                     data-bs-parent="#trainingsAccordion">
+                  <div class="accordion-body">
+                    <p>{{ training.description }}</p>
+                    
+                    {% if training.clients %}
+                      <h5>Записавшиеся клиенты:</h5>
+                      <div class="list-group mt-3">
+                        {% for client in training.clients %}
+                        <div class="list-group-item">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                              <h6 class="mb-1">{{ client.first_name }} {{ client.last_name }}</h6>
+                              <small class="text-muted">ID: {{ client.id }}</small>
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    {% else %}
+                      <div class="alert alert-info mt-3">
+                        На эту тренировку пока никто не записался
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-4">
+              <h5>У вас пока нет запланированных тренировок</h5>
+              <a href="/page/" class="btn btn-primary mt-3">
+                <i class="bi bi-plus-circle"></i> Создать тренировку
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function editProfile() {
+    // Реализация редактирования профиля
+    alert('Функция редактирования профиля будет реализована позже');
+  }
+</script>
+
+<style>
+  .accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+  }
+  .accordion-body {
+    background-color: #f8f9fa;
+  }
+</style>
+{% endblock %}

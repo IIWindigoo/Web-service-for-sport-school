@@ -3,8 +3,17 @@
 {% block title %}Главная - Спортивная школа{% endblock %}
 
 {% block content %}
-  <h2 class="mb-4">Добро пожаловать в нашу спортивную школу!</h2>
-  <p class="mb-4">Выберите тренировку и присоединяйтесь!</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-0">Добро пожаловать в нашу спортивную школу!</h2>
+      <p class="mb-0">Выберите тренировку и присоединяйтесь!</p>
+    </div>
+    {% if user and user.role in ['admin', 'trainer'] %}
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTrainingModal">
+        <i class="bi bi-plus-circle"></i> Создать тренировку
+      </button>
+    {% endif %}
+  </div>
 
   <div class="row">
     {% for t in trainings %}
@@ -17,11 +26,38 @@
             {{ t.date | format_date }}<br>
             {{ t.start_time | format_time }} — {{ t.end_time | format_time }}
           </p>
-          <button class="btn btn-sm btn-primary book-training" 
-                  data-training-id="{{ t.id }}"
-                  {% if not user or user.role != 'client' %}disabled{% endif %}>
-            Записаться
-          </button>
+          <p class="card-text">
+            <small class="text-muted">Тренер: {{ t.trainer.first_name }} {{ t.trainer.last_name }}</small>
+          </p>
+          
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-sm btn-primary book-training" 
+                    data-training-id="{{ t.id }}"
+                    {% if not user or user.role != 'client' %}disabled{% endif %}>
+              Записаться
+            </button>
+            
+            {% if user and (user.role == 'admin' or (user.role == 'trainer' and t.trainer_id == user.id)) %}
+              <div>
+                <button class="btn btn-sm btn-outline-warning edit-training" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#editTrainingModal"
+                        data-training-id="{{ t.id }}"
+                        data-training-title="{{ t.title }}"
+                        data-training-description="{{ t.description }}"
+                        data-training-date="{{ t.date.isoformat() }}"
+                        data-training-start-time="{{ t.start_time.isoformat() }}"
+                        data-training-end-time="{{ t.end_time.isoformat() }}">
+                  Редактировать
+                </button>
+                <button class="btn btn-sm btn-outline-danger delete-training ms-2"
+                        data-training-id="{{ t.id }}">
+                  Удалить
+                </button>
+              </div>
+            {% endif %}
+          </div>
+          
           {% if not user %}
             <p class="text-danger mt-2 mb-0 small">Для записи необходимо войти</p>
           {% elif user.role != 'client' %}
@@ -32,4 +68,6 @@
     </div>
     {% endfor %}
   </div>
+  {% include "modals/add_training_modal.html" %}
+  {% include "modals/edit_training_modal.html" %}
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Доступ запрещен{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 mx-auto text-center">
+      <h1 class="display-4">403 - Доступ запрещен</h1>
+      <p class="lead">{{ detail }}</p>
+      <p>У вас нет прав для просмотра этой страницы.</p>
+      <a href="/page/" class="btn btn-primary mt-3">Вернуться на главную</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Панель администратора{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="mb-4">Панель администратора</h2>
+      
+      <!-- Вкладки -->
+      <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="users-tab" data-bs-toggle="tab" 
+                  data-bs-target="#users" type="button" role="tab">
+            Пользователи
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="trainings-tab" data-bs-toggle="tab" 
+                  data-bs-target="#trainings" type="button" role="tab">
+            Тренировки
+          </button>
+        </li>
+      </ul>
+      
+      <!-- Содержимое вкладок -->
+      <div class="tab-content" id="adminTabsContent">
+        <!-- Вкладка пользователей -->
+        <div class="tab-pane fade show active" id="users" role="tabpanel">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Все пользователи</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Имя</th>
+                      <th>Email</th>
+                      <th>Телефон</th>
+                      <th>Роль</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for user in users %}
+                    <tr>
+                      <td>{{ user.id }}</td>
+                      <td>{{ user.first_name }} {{ user.last_name }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>{{ user.phone_number }}</td>
+                      <td>
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" 
+                                  id="roleDropdown{{ user.id }}" data-bs-toggle="dropdown" 
+                                  aria-expanded="false" {% if user.id == current_user_id %}disabled{% endif %}>
+                            {{ user.role }}
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="roleDropdown{{ user.id }}">
+                            <button class="dropdown-item" onclick="updateRole('{{ user.id }}', 'client')">client</button>
+                            <button class="dropdown-item" onclick="updateRole('{{ user.id }}', 'trainer')">trainer</button>
+                            <button class="dropdown-item" onclick="updateRole('{{ user.id }}', 'admin')">admin</button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Вкладка тренировок -->
+        <div class="tab-pane fade" id="trainings" role="tabpanel">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Все тренировки</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Название</th>
+                      <th>Дата</th>
+                      <th>Время</th>
+                      <th>Тренер</th>
+                      <th>Действия</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for training in trainings %}
+                    <tr>
+                      <td>{{ training.id }}</td>
+                      <td>{{ training.title }}</td>
+                      <td>{{ training.date | format_date }}</td>
+                      <td>
+                        {{ training.start_time | format_time }} - {{ training.end_time | format_time }}
+                      </td>
+                      <td>
+                        {% if training.trainer %}
+                          {{ training.trainer.first_name }} {{ training.trainer.last_name }}
+                        {% else %}
+                          Не назначен
+                        {% endif %}
+                      </td>
+                      <td>
+                        <div class="btn-group btn-group-sm">
+                          <button class="btn btn-outline-danger delete-training" 
+                                  data-training-id="{{ training.id }}">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно изменения роли -->
+<div class="modal fade" id="confirmRoleChangeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Подтверждение изменения роли</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Вы уверены, что хотите изменить роль пользователя <span id="userName"></span>?</p>
+        <p>Новая роль: <strong id="newRole"></strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary" id="confirmRoleChange">Подтвердить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Подключение скриптов -->
+<script src="{{ url_for('static', path='js/admin_panel.js') }}"></script>
+{% endblock %}
