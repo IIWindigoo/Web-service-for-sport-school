@@ -23,9 +23,10 @@ class BaseDAO:
             return result.scalar_one_or_none()
 
     @classmethod
-    async def find_all(cls):
+    async def find_all(cls, filters: BaseModel | None = None):
+        filter_dict = filters.model_dump(exclude_unset=True) if filters else {}
         async with async_session() as session:
-            query = select(cls.model)
+            query = select(cls.model).filter_by(**filter_dict)
             result = await session.execute(query)
             return result.scalars().all()
         
