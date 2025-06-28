@@ -54,3 +54,6 @@ class SUserShort(BaseModel):
     first_name: str
     last_name: str
     model_config = ConfigDict(from_attributes=True)
+
+class SUserFilter(BaseModel):
+    role: UserRole | None = None
