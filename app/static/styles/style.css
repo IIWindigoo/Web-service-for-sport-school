@@ -54,3 +54,122 @@ body {
     color: #dc3545;
     font-size: 0.875rem;
 }
+/* Стили для модального окна */
+#createTrainingModal .modal-content {
+    border-radius: 10px;
+}
+
+#createTrainingModal .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 10px 10px 0 0;
+}
+
+#createTrainingModal .modal-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Стили для кнопки создания */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    transition: all 0.3s;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+/* Стили для кнопок управления */
+.edit-training {
+    transition: all 0.3s;
+}
+.edit-training:hover {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+}
+
+.delete-training {
+    transition: all 0.3s;
+}
+.delete-training:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .card-body .d-flex {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .card-body .d-flex > div {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+/* Стили для кнопки главной страницы */
+.btn-outline-secondary {
+    transition: all 0.3s;
+  }
+  .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  /* Адаптация для мобильных */
+  @media (max-width: 768px) {
+    header .d-flex {
+      flex-direction: column;
+      gap: 10px;
+    }
+    header .d-flex > div {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  /* Стили для dropdown */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.25rem;
+  }
+  
+  .dropdown-menu.show {
+    display: block;
+  }
+  
+  .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }

@@ -236,3 +236,141 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Функция для создания тренировки
+async function createTraining(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById('create-training-form');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Преобразуем дату и время в правильный формат
+    data.date = new Date(data.date).toISOString().split('T')[0];
+    
+    try {
+        const response = await fetch('/trainings/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            alert('Тренировка успешно создана!');
+            // Закрываем модальное окно
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createTrainingModal'));
+            modal.hide();
+            // Обновляем страницу
+            window.location.reload();
+        } else {
+            const error = await response.json();
+            alert(error.detail || 'Ошибка при создании тренировки');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка. Попробуйте позже.');
+    }
+}
+
+// Инициализация после загрузки страницы
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('create-training-form');
+    if (form) {
+        form.addEventListener('submit', createTraining);
+    }
+    
+    // Установка минимальной даты (сегодня)
+    const dateInput = document.querySelector('input[name="date"]');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    }
+});
+
+// Обработчик кнопки редактирования
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация модального окна редактирования
+    document.querySelectorAll('.edit-training').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = document.getElementById('editTrainingModal');
+            modal.querySelector('#edit-training-id').value = this.dataset.trainingId;
+            modal.querySelector('#edit-training-title').value = this.dataset.trainingTitle;
+            modal.querySelector('#edit-training-description').value = this.dataset.trainingDescription;
+            modal.querySelector('#edit-training-date').value = this.dataset.trainingDate;
+            modal.querySelector('#edit-training-start-time').value = this.dataset.trainingStartTime;
+            modal.querySelector('#edit-training-end-time').value = this.dataset.trainingEndTime;
+        });
+    });
+
+    // Обработчик формы редактирования
+    const editForm = document.getElementById('edit-training-form');
+    if (editForm) {
+        editForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(editForm);
+            const trainingId = formData.get('id');
+            const data = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                date: formData.get('date'),
+                start_time: formData.get('start_time'),
+                end_time: formData.get('end_time')
+            };
+
+            try {
+                const response = await fetch(`/trainings/${trainingId}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Тренировка успешно обновлена!');
+                    window.location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Ошибка при обновлении тренировки');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка. Попробуйте позже.');
+            }
+        });
+    }
+
+    // Обработчик удаления тренировки
+    document.querySelectorAll('.delete-training').forEach(button => {
+        button.addEventListener('click', async function() {
+            const trainingId = this.dataset.trainingId;
+            if (!confirm('Вы уверены, что хотите удалить эту тренировку?')) return;
+
+            try {
+                const response = await fetch(`/trainings/${trainingId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Тренировка успешно удалена!');
+                    window.location.reload();
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Ошибка при удалении тренировки');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка. Попробуйте позже.');
+            }
+        });
+    });
+});
